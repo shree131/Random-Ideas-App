@@ -1,34 +1,22 @@
 // Bring in express modules
 const express = require('express');
-const port = 8000;
+require('dotenv').config();
+const port = process.env.PORT || 5000;
 
-const ideas = [
-    {
-        id: 1,
-        text: 'Positive NewsLetter, a newsletter that only shares positive, uplifting news',
-        tag: 'Technology',
-        username: 'TonyStart',
-        data: '2022-01-02'
-    },
-    {
-        id: 2,
-        text: 'Milk cartons that change colors as it ages',
-        tag: 'Inventions',
-        username: 'SteveRogers',
-        data: '2022-01-02'
-    },
-    {
-        id: 3,
-        text: 'Pet interation app for new pet parents to get to know the right pet for them before they adopt',
-        tag: 'Technology',
-        username: 'ShreyPan',
-        data: '2022-01-02'
-    },
+// Bring in connectDB
+const connectDB = require('./config/db');
 
-]
+connectDB();
 
 // Initialize a variable (obj) with diff methods for creating server and creating routes
 const app = express();
+
+// Body parser middleware - send raw json to server 
+// Very commonly used like this in all api
+// Before had to import body parser; express 5 doesn't need it sep
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+// allows to access req.body sent
 
 // Simple route - compared to http where there was bunch of if statements
 // For get requests - takes a request and response objs
@@ -41,28 +29,11 @@ app.get('/', (req, res) => {
 
 // Restful struture - get idea -> get req; create idea -> create req' post idea -> post req
 
-// Get all ideas
-app.get('/api/ideas', (req, res) => {
-    res.json({ success: true, data: ideas });
-});
+// Get the router
+const ideasRouter = require('./routes/ideas');
 
-// Get specific ideas using query param ':' to get id requested 
-app.get('/api/ideas/:id', (req, res) => {
-    // Access using req.params.id
-    // res.json({ success: true, data: req.params.id });
-
-    // or use find 
-    // Manual - easier with Mangose db
-    const idea = ideas.filter(ideaObj => ideaObj.id === parseInt(req.params.id));
-
-    if (idea.length === 0) {
-        return res.status(404)
-            .json({ success: false, error: 'Resource not found' });
-    }
-
-    res.json({ success: true, data: idea });
-});
-
+// Create middleware - takes endpoint and router
+app.use('/api/ideas', ideasRouter);
 
 // Create the server with listen
 app.listen(port, () => console.log(`Listening on port ${port}`));
