@@ -1,5 +1,6 @@
 // Bring in express modules
 const express = require('express');
+const cors = require('cors');
 require('dotenv').config();
 const port = process.env.PORT || 5000;
 
@@ -22,6 +23,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 // allows to access req.body sent
+
+// cors middleware
+// app.use(cors()); - allows anywhere
+app.use(
+    cors({
+        origin: ['http://localhost:8080', 'http://localhost:3000'],
+        credentials: true
+    }));
+
 
 // Simple route - compared to http where there was bunch of if statements
 // For get requests - takes a request and response objs

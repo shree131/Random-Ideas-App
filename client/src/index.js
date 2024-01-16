@@ -10,4 +10,3 @@ const ideaForm = new IdeaForm();
 ideaForm.render();
 
 const ideaList = new IdeaList();
-ideaList.render();
