@@ -15,6 +15,17 @@ class IdeaList {
         this._validTags.add('inventions');
     };
 
+    addEventListerners() {
+        this._ideaListEl.addEventListener('click', (e) => {
+            if (e.target.classList.contains('fa-times')) {
+                e.stopImmediatePropagation(); // stop from propagating to parent
+
+                const ideaId = e.target.parentElement.parentElement.dataset.id;
+                this.deleteIdea(ideaId);
+            }
+        })
+    };
+
     // Alt to .then()
     async getIdeas() {
         try {
@@ -26,6 +37,18 @@ class IdeaList {
             this.render();
         } catch (error) {
             console.log(error);
+        }
+    };
+
+    async deleteIdea(ideaId) {
+        try {
+            // Delete from server
+            const res = await IdeasApi.deleteIdea(ideaId);
+
+            // Render the page
+            this.getIdeas();
+        } catch (error) {
+            alert('You are unauthorized to delete the resource.');
         }
     };
 
@@ -51,7 +74,7 @@ class IdeaList {
             const tagClass = this.getTagClass(idea.tag);
 
             return `
-            <div class="card">
+            <div class="card" data-id="${idea._id}">
             <button class="delete"><i class="fas fa-times"></i></button>
             <h3>
                 ${idea.text}
@@ -63,6 +86,8 @@ class IdeaList {
             </p>
             </div>`;
         }).join(''); // Join from array -> string
+
+        this.addEventListerners();
     };
 };
 
