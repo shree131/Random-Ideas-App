@@ -17,11 +17,14 @@ class IdeaForm {
         const tagValue = this._form.elements.tag.value;
         const usernameValue = this._form.elements.username.value;
 
-        // Frontend validations
+        // Frontend input validations
         if (!textValue || !tagValue || !usernameValue) {
             alert('Please enter all fields');
             return;
         };
+
+        // Save username to local storage
+        localStorage.setItem('username', usernameValue);
 
         const idea = {
             // Name of form input
@@ -41,17 +44,21 @@ class IdeaForm {
         this._form.elements.tag.value = '';
         this._form.elements.username.value = '';
 
+        // Render page after saving to local storage
+        this.render();
+
         // Close Modal - by dispatching a custom event
         document.dispatchEvent(new Event('closemodal'));
     };
 
     // Creating something similar to react
     render() {
+        const username = localStorage.getItem('username') ? localStorage.getItem('username') : '';
         this._formModal.innerHTML = `
         <form id="idea-form">
         <div class="form-control">
             <label for="idea-text">Enter a Username</label>
-            <input type="text" name="username" id="username" />
+            <input type="text" name="username" value="${username}" id="username" />
         </div>
         <div class="form-control">
             <label for="idea-text">What's Your Idea?</label>
