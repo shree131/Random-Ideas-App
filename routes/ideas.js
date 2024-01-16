@@ -51,19 +51,29 @@ router.post('/', async (req, res) => {
 // Update requests
 router.put('/:id', async (req, res) => {
     try {
-        const updatedIdea = await Idea.findByIdAndUpdate(req.params.id,
-            {
-                // Set the fields
-                $set: {
-                    text: req.body.text,
-                    tag: req.body.tag
-                }
-            },
-            // 3rd argument
-            { new: true } // If idea doesn't exist with the id, it will create a new idea
-        );
 
-        res.json({ success: true, data: updatedIdea });
+        // Username Validation/Authorization Check
+        const idea = await Idea.findById(req.params.id);
+
+        if (idea.username === req.body.username) {
+            const updatedIdea = await Idea.findByIdAndUpdate(req.params.id,
+                {
+                    // Set the fields
+                    $set: {
+                        text: req.body.text,
+                        tag: req.body.tag
+                    }
+                },
+                // 3rd argument
+                { new: true } // If idea doesn't exist with the id, it will create a new idea
+            );
+
+            res.json({ success: true, data: updatedIdea });
+
+        } else {
+            res.status(403).json({ success: false, error: 'User is unauthorized to update the resource.' })
+        }
+
     } catch (error) {
         console.log(error);
         res.status(500).json({ success: false, error: 'Something went wrong' });
@@ -73,11 +83,19 @@ router.put('/:id', async (req, res) => {
 // Delete requests
 router.delete('/:id', async (req, res) => {
     try {
-        await Idea.findByIdAndDelete(req.params.id);
-        res.json({ success: true, data: {} });
+        // Username Validation/Authorization Check
+        const idea = await Idea.findById(req.params.id);
+
+        if (idea.username === req.body.username) {
+            await Idea.findByIdAndDelete(req.params.id);
+            res.json({ success: true, data: {} });
+        } else {
+            res.status(403).json({ success: false, error: 'User is unauthorized to delete the resource.' });
+        }
+
     } catch (error) {
         console.log(error);
-        res.status(500).json({ success: false, error: 'Something went wrong' });
+        res.status(500).json({ success: false, error: 'Something went wrong.' });
     }
 });
 
