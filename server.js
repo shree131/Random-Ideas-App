@@ -11,6 +11,11 @@ connectDB();
 // Initialize a variable (obj) with diff methods for creating server and creating routes
 const app = express();
 
+// Static Folder
+const path = require('path');
+app.use(express.static(path.join(__dirname, 'public')));
+
+
 // Body parser middleware - send raw json to server 
 // Very commonly used like this in all api
 // Before had to import body parser; express 5 doesn't need it sep
