@@ -1,3 +1,6 @@
+import IdeasApi from "../services/ideasApi";
+import IdeaList from './IdeaList';
+
 class IdeaForm {
     constructor() {
         this._formModal = document.querySelector('#form-modal');
@@ -5,18 +8,33 @@ class IdeaForm {
 
     _addEventListener() {
         this._form.addEventListener('submit', this._handleSubmit.bind(this));
+        this._ideaList = new IdeaList();
     };
 
-    _handleSubmit(e) {
+    async _handleSubmit(e) {
         e.preventDefault();
+        const textValue = this._form.elements.text.value;
+        const tagValue = this._form.elements.tag.value;
+        const usernameValue = this._form.elements.username.value;
+
+        // Frontend validations
+        if (!textValue || !tagValue || !usernameValue) {
+            alert('Please enter all fields');
+            return;
+        };
 
         const idea = {
             // Name of form input
-            text: this._form.elements.text.value,
-            tag: this._form.elements.tag.value,
-            username: this._form.elements.username.value
+            text: textValue,
+            tag: tagValue,
+            username: usernameValue
         }
-        console.log(idea);
+
+        // Add data to server
+        const newIdea = await IdeasApi.createIdea(idea);
+
+        // Add data to list
+        this._ideaList.addIdeaToList();
 
         // Clear input fields after submit
         this._form.elements.text.value = '';

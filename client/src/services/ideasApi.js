@@ -9,6 +9,10 @@ class IdeasApi {
         // Alt to fetch - get request to the url
         return axios.get(this._apiUrl); // returns a promise
     }
+
+    createIdea(data) {
+        return axios.post(this._apiUrl, data);
+    }
 };
 
 // Can export after initialization

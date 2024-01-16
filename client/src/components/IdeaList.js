@@ -29,6 +29,10 @@ class IdeaList {
         }
     };
 
+    addIdeaToList() {
+        this.getIdeas();
+    }
+
 
     getTagClass(tag) {
 
